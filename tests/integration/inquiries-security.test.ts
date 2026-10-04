@@ -1,6 +1,67 @@
 import { describe, expect, it, beforeAll } from "vitest";
 import { POST } from "@/app/api/inquiries/route";
-beforeAll(() => { Object.assign(process.env, { NEXT_PUBLIC_SITE_URL: "http://localhost:3000", NEXT_PUBLIC_SANITY_PROJECT_ID: "synthetic", NEXT_PUBLIC_SANITY_DATASET: "test", NEXT_PUBLIC_ANALYTICS_CONSENT_MODE: "opt-in", SANITY_API_VERSION: "2025-01-01", LEAD_ALLOWED_ORIGINS: "http://localhost:3000" }); });
-const valid = { name: "Ada Lovelace", email: "ada@example.com", company: "Analytical Engines", goals: "We need a clearer path for teams evaluating our product.", budgetRange: "25k-50k", timeline: "this-quarter", privacyAccepted: true, idempotencyKey: "abcdefghijklmnop" };
-function request(body: unknown, headers: Record<string, string> = { "content-type": "application/json", origin: "http://localhost:3000" }) { return new Request("http://localhost:3000/api/inquiries", { method: "POST", headers, body: JSON.stringify(body) }); }
-describe("inquiry security boundary", () => { it("accepts valid synthetic inquiry without exposing provider details", async () => { const response = await POST(request(valid)); expect(response.status).toBe(202); const body = await response.json(); expect(body).toMatchObject({ status: "accepted", message: expect.any(String), requestId: expect.any(String) }); expect(JSON.stringify(body)).not.toContain(valid.email); }); it("rejects cross-origin before delivery", async () => { const response = await POST(request(valid, { "content-type": "application/json", origin: "https://attacker.example" })); expect(response.status).toBe(403); }); it("rejects unknown fields", async () => { const response = await POST(request({ ...valid, extra: "nope" })); expect(response.status).toBe(422); }); it("rejects oversized body", async () => { const response = await POST(request({ ...valid, goals: "x".repeat(20_000) })); expect(response.status).toBe(413); }); });
+beforeAll(() => {
+  Object.assign(process.env, {
+    NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+    NEXT_PUBLIC_SANITY_PROJECT_ID: "synthetic",
+    NEXT_PUBLIC_SANITY_DATASET: "test",
+    NEXT_PUBLIC_ANALYTICS_CONSENT_MODE: "opt-in",
+    SANITY_API_VERSION: "2025-01-01",
+    LEAD_ALLOWED_ORIGINS: "http://localhost:3000",
+  });
+});
+const valid = {
+  name: "Ada Lovelace",
+  email: "ada@example.com",
+  company: "Analytical Engines",
+  goals: "We need a clearer path for teams evaluating our product.",
+  budgetRange: "25k-50k",
+  timeline: "this-quarter",
+  privacyAccepted: true,
+  idempotencyKey: "abcdefghijklmnop",
+};
+function request(
+  body: unknown,
+  headers: Record<string, string> = {
+    "content-type": "application/json",
+    origin: "http://localhost:3000",
+  },
+) {
+  return new Request("http://localhost:3000/api/inquiries", {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  });
+}
+describe("inquiry security boundary", () => {
+  it("accepts valid synthetic inquiry without exposing provider details", async () => {
+    const response = await POST(request(valid));
+    expect(response.status).toBe(202);
+    const body = await response.json();
+    expect(body).toMatchObject({
+      status: "accepted",
+      message: expect.any(String),
+      requestId: expect.any(String),
+    });
+    expect(JSON.stringify(body)).not.toContain(valid.email);
+  });
+  it("rejects cross-origin before delivery", async () => {
+    const response = await POST(
+      request(valid, {
+        "content-type": "application/json",
+        origin: "https://attacker.example",
+      }),
+    );
+    expect(response.status).toBe(403);
+  });
+  it("rejects unknown fields", async () => {
+    const response = await POST(request({ ...valid, extra: "nope" }));
+    expect(response.status).toBe(422);
+  });
+  it("rejects oversized body", async () => {
+    const response = await POST(
+      request({ ...valid, goals: "x".repeat(20_000) }),
+    );
+    expect(response.status).toBe(413);
+  });
+});

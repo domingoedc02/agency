@@ -21,7 +21,12 @@ describe("domain contracts", () => {
   });
 
   it("only exposes verified, current, attributed case studies", () => {
-    expect(isPublishableCaseStudy(SYNTHETIC_CASE_STUDY, new Date("2026-02-01T00:00:00.000Z"))).toBe(true);
+    expect(
+      isPublishableCaseStudy(
+        SYNTHETIC_CASE_STUDY,
+        new Date("2026-02-01T00:00:00.000Z"),
+      ),
+    ).toBe(true);
     expect(
       isPublishableCaseStudy(
         { ...SYNTHETIC_CASE_STUDY, verificationStatus: "withdrawn" },
