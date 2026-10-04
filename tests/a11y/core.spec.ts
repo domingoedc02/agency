@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 test("core route exposes accessible landmarks and navigation", async ({
-  page,
+  browser,
 }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
   expect(response?.ok()).toBe(true);
   await expect(page.locator("body")).toContainText("Make the next move");
@@ -12,4 +14,5 @@ test("core route exposes accessible landmarks and navigation", async ({
   await expect(
     page.getByRole("link", { name: /trustmotion agency home/i }),
   ).toBeVisible();
+  await context.close();
 });
