@@ -36,6 +36,19 @@ jobs:
         run: pnpm test
       - name: Production build
         run: pnpm build
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Browser no-JS gate
+        run: pnpm test:e2e
+      - name: Accessibility gate
+        run: pnpm test:a11y
+      - name: Start production server
+        run: |
+          mkdir -p artifacts
+          pnpm start > artifacts/next.log 2>&1 &
+          npx --yes wait-on http://127.0.0.1:3000
+      - name: Lighthouse gate
+        run: pnpm lighthouse
       - name: Secret scan
         run: pnpm security:secrets
       - name: Dependency audit
