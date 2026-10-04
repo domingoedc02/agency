@@ -63,10 +63,10 @@ describe("provider boundaries", () => {
   it("does not dispatch Plausible before consent and swallows provider failure", () => {
     const dispatch = vi.fn().mockImplementation(() => { throw new Error("blocked"); });
     const adapter = new PlausibleAdapter({ enabled: false, dispatch });
-    adapter.track("submission", { source: "synthetic" });
+    adapter.track("submission", { source: "contact" });
     expect(dispatch).not.toHaveBeenCalled();
     const enabled = new PlausibleAdapter({ enabled: true, dispatch });
-    expect(() => enabled.track("submission", { source: "synthetic" })).not.toThrow();
+    expect(() => enabled.track("submission", { source: "contact" })).not.toThrow();
   });
 
   it("keeps fixtures provider-neutral and synthetic", () => {

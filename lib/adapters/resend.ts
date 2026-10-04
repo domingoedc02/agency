@@ -27,7 +27,12 @@ function assertServerAddress(value: string): string {
 }
 
 function escapePlainText(value: string): string {
-  return value.replace(/[\r\n  ]/g, " ").replace(/[\u0000-\u001f\u007f]/g, " ");
+  return [...value]
+    .map((character) => {
+      const code = character.codePointAt(0) ?? 0;
+      return code <= 0x1f || code === 0x7f || code === 0x2028 || code === 0x2029 ? " " : character;
+    })
+    .join("");
 }
 
 function formatInquiry(input: InquiryInput, requestId: string): string {
