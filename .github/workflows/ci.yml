@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Format check
+        run: pnpm format:check
+      - name: Unit tests
+        run: pnpm test
+      - name: Production build
+        run: pnpm build
+      - name: Start production server
+        run: |
+          mkdir -p artifacts
+          pnpm start > artifacts/next.log 2>&1 &
+          npx --yes wait-on http://127.0.0.1:3000
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Browser no-JS gate
+        run: pnpm test:e2e
+      - name: Accessibility gate
+        run: pnpm test:a11y
+      - name: Lighthouse gate
+        run: pnpm lighthouse
+      - name: Secret scan
+        run: pnpm security:secrets
+      - name: Dependency audit
+        run: pnpm security:audit
+      - name: Bundle budget
+        run: pnpm check:bundle
+      - name: CI evidence
+        run: pnpm ci:evidence
+      - name: Upload CI evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-evidence-${{ github.sha }}
+          path: artifacts/
+          if-no-files-found: error

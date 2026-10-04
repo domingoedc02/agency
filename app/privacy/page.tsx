@@ -1,0 +1,44 @@
+import { SiteHeader } from "@/components/content/SiteHeader";
+import { SiteFooter } from "@/components/content/SiteFooter";
+export const metadata = {
+  title: "Privacy | TrustMotion Agency",
+  description: "How TrustMotion handles website and enquiry information.",
+};
+export default function PrivacyPage() {
+  return (
+    <>
+      <SiteHeader />
+      <main>
+        <article className="prose">
+          <p className="eyebrow">Privacy notice · version 1.0</p>
+          <h1>Privacy, plainly explained.</h1>
+          <h2>What we receive</h2>
+          <p>
+            If you send an enquiry, we receive the details you choose to share:
+            your name, work email, company, goals, budget range, timeline, and
+            consent. We use them to respond to you.
+          </p>
+          <h2>What we do not do</h2>
+          <p>
+            We do not store enquiries in this application, sell personal
+            information, put enquiry details in URLs or analytics, or invent
+            proof about client outcomes.
+          </p>
+          <h2>Providers</h2>
+          <p>
+            Enquiry delivery is handled by our configured mail provider. Booking
+            is handled by Cal.com after you choose to follow the booking link.
+            We use optional aggregate analytics only with consent.
+          </p>
+          <h2>Your choices</h2>
+          <p>
+            You can ask about, correct, or delete information held by the
+            relevant provider. Contact us through the enquiry form to start a
+            request.
+          </p>
+        </article>
+      </main>
+      <SiteFooter />
+    </>
+  );
+}
