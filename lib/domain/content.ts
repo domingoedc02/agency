@@ -132,3 +132,19 @@ export function isPublishableCaseStudy(value: CaseStudy, now = new Date()): bool
     )
   );
 }
+
+export type LandingContent = LandingPage;
+export const fallbackLanding: LandingContent = {
+  ...CONTENT_FALLBACK,
+  hero: { eyebrow: "TrustMotion Agency", title: "Clear digital experiences for ambitious teams.", summary: "We help teams turn complex offers into confident, useful journeys that make the next step obvious." },
+  intro: "Start with a focused conversation about your audience, offer, and the decision your website needs to support.",
+  services: [
+    { slug: "strategy", title: "Digital strategy", summary: "A practical point of view on audience, proposition, and priority.", outcomes: ["Sharper positioning", "A sequenced plan"], sortOrder: 1, publishedAt: "2026-01-01T00:00:00.000Z" },
+    { slug: "experience", title: "Experience design", summary: "Accessible content and interfaces that help people understand and act.", outcomes: ["Clearer journeys", "Reusable systems"], sortOrder: 2, publishedAt: "2026-01-01T00:00:00.000Z" },
+  ],
+  process: [],
+  proof: "We publish only evidence-backed work. Until approved case studies are available, this site makes no invented performance claims.",
+  ctas: [{ kind: "booking", label: "Book a conversation" }, { kind: "contact", label: "Send an enquiry" }],
+};
+export function ctaHref(cta: Cta): string { return cta.kind === "booking" ? "/book" : cta.kind === "contact" ? "/contact" : cta.href ?? "/contact"; }
+export function isEligibleCaseStudy(study: CaseStudy, now = new Date()): boolean { return isPublishableCaseStudy(study, now); }

@@ -3,7 +3,9 @@
 export const BUDGET_RANGES = ["under-10k", "10k-25k", "25k-50k", "50k-plus"] as const;
 export type BudgetRange = (typeof BUDGET_RANGES)[number];
 
-export const TIMELINES = ["now", "this-quarter", "next-quarter", "exploring"] as const;
+export const TIMELINES = ["now", "this-quarter", "next-quarter", "exploring", "flexible"] as const;
+export const budgetRanges = BUDGET_RANGES;
+export const timelines = TIMELINES;
 export type Timeline = (typeof TIMELINES)[number];
 
 export interface InquiryInput {
