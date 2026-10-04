@@ -11,8 +11,15 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "format:check": "prettier --check app tests next.config.ts tsconfig.json package.json .eslintrc.json .github/workflows/ci.yml",
+    "format:check": "prettier --check app tests scripts next.config.ts tsconfig.json package.json .eslintrc.json .github/workflows/ci.yml",
     "test": "vitest run",
+    "test:e2e": "playwright test tests/e2e",
+    "test:a11y": "playwright test tests/a11y",
+    "lighthouse": "lighthouse http://127.0.0.1:3000 --output=json --output-path=artifacts/lighthouse.json --chrome-flags=\"--headless --no-sandbox\"",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "security:secrets": "node scripts/check-secrets.mjs",
+    "security:audit": "pnpm audit --audit-level=high",
+    "ci:evidence": "node scripts/write-ci-evidence.mjs",
     "build": "next build"
   },
   "dependencies": {
@@ -21,13 +28,15 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.55.1",
     "@types/node": "22.13.4",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "eslint": "8.57.1",
     "eslint-config-next": "15.5.27",
+    "lighthouse": "12.3.0",
     "prettier": "3.5.3",
-    "typescript": "5.7.3",
-    "vitest": "3.0.9"
+    "typescript": "5.8.3",
+    "vitest": "3.2.6"
   }
 }

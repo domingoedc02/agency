@@ -36,3 +36,17 @@ jobs:
         run: pnpm test
       - name: Production build
         run: pnpm build
+      - name: Secret scan
+        run: pnpm security:secrets
+      - name: Dependency audit
+        run: pnpm security:audit
+      - name: Bundle budget
+        run: pnpm check:bundle
+      - name: CI evidence
+        run: pnpm ci:evidence
+      - name: Upload CI evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-evidence-${{ github.sha }}
+          path: artifacts/
+          if-no-files-found: error
